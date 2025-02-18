@@ -12,56 +12,61 @@ import cloudinary from "../utils/cloudinary.js";
 
 
 
+
+
+
+
+
+
 export const register = async (req, res) => {
-      try {
-            const { fullname, email, phoneNumber, password, role } = req.body;
-         
-            if (!fullname || !email || !phoneNumber || !password || !role) {
-                return res.status(400).json({
-                    message: "Something is missing",
-                    success: false
-                });
-            };
+    try {
+        const { fullname, email, phoneNumber, password, role } = req.body;
 
-            const file = req.file;
-            const fileUri = getDataUri(file);
-            const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-    
-            const user = await User.findOne({ email });
-            if (user) {
-                return res.status(400).json({
-                    message: 'User already exist with this email.',
-                    success: false,
-                })
-            }
-            const hashedPassword = await bcrypt.hash(password, 10);
-
-            const newUser = new User({
-                fullname,
-                email,
-                phoneNumber,
-                password: hashedPassword,
-                role,
-                profile: {
-                    profilePhoto: cloudResponse.url
-                }
+        if (!fullname || !email || !phoneNumber || !password || !role) {
+            return res.status(400).json({
+                message: "Something is missing",
+                success: false
             });
-            
+        }
 
-            await newUser.save();
+        // 🛑 Handle missing file safely
+        let profilePhoto = null;
+        if (req.file) {
+            const fileUri = getDataUri(req.file);
+            const cloudResponse = await cloudinary.uploader.upload(fileUri);
+            profilePhoto = cloudResponse.url;
+        }
 
-            res.status(201).json({
-                message: 'User registered successfully',
-                success: true,
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({
+                message: 'User already exists with this email.',
+                success: false,
             });
+        }
 
+        const hashedPassword = await bcrypt.hash(password, 10);
 
+        const newUser = new User({
+            fullname,
+            email,
+            phoneNumber,
+            password: hashedPassword,
+            role,
+            profile: { profilePhoto }
+        });
 
-      } catch (error) {
-      res.status(400).json({ message: error.message });
-      }
+        await newUser.save();
+
+        res.status(201).json({
+            message: 'User registered successfully',
+            success: true,
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
-
 
 export const login = async (req, res) => {
       try {
