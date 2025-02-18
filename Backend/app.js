@@ -15,12 +15,14 @@ import applicationRoute from "./routes/application.route.js";
 
 const app = express();
 dotenv.config({});
-app.use(cors());
+
 
 dbconnect();
 
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+
 app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Hello World");
