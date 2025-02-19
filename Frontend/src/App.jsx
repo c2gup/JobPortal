@@ -21,6 +21,7 @@ import Home from './components/Home'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
+import Profile from './components/Profile '
 // import Navbar from './components/shared/Navbar'
 
 // import Home from './components/Home'
@@ -62,10 +63,10 @@ const appRouter = createBrowserRouter([
   //   path: "/browse",
   //   element: <Browse />
   // },
-  // {
-  //   path: "/profile",
-  //   element: <Profile />
-  // },
+   {
+    path: "/profile",
+    element: <Profile />
+  },
   // // admin ke liye yha se start hoga
   // {
   //   path:"/admin/companies",
