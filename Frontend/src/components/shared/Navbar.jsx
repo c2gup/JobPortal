@@ -4,16 +4,42 @@ import { Button } from '../ui/button'
 import { Avatar, AvatarImage } from '../ui/avatar'
 import { LogOut, User2 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
-// import { useDispatch, useSelector } from 'react-redux'
-// import axios from 'axios'
-// import { USER_API_END_POINT } from '@/utils/constant'
-// import { setUser } from '@/redux/authSlice'
-// import { toast } from 'sonner'
+import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
+import { USER_API_END_POINT } from '@/utils/constant'
+import { setUser } from '@/redux/authSlice'
+import { toast } from 'sonner'
 
 const Navbar = () => {
   
+const { user } = useSelector(store => store.auth);
 
-   const user = false;
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const handleLogout = async () => {
+        try {
+            const response = await axios.get(`${USER_API_END_POINT}/logout`, {
+                withCredentials: true
+            });
+
+            if (response.data.success) {
+                dispatch(setUser(null));
+                navigate('/login');
+                toast.success(response.data.message);
+            }
+
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response.data.message);
+        }
+        finally{
+            dispatch(setLoading(false));
+        }
+
+
+    }
+
+
     return (
         <div className='bg-white'>
             <div className='flex items-center justify-between mx-auto max-w-7xl h-16'>
@@ -75,7 +101,7 @@ const Navbar = () => {
 
                                             <div className='flex w-fit items-center gap-2 cursor-pointer'>
                                                 <LogOut />
-                                                <Button onClick={logoutHandler} variant="link">Logout</Button>
+                                                <Button onClick={handleLogout} variant="link">Logout</Button>
                                             </div>
                                         </div>
                                     </div>

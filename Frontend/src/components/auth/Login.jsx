@@ -8,20 +8,20 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
-// import { useDispatch, useSelector } from 'react-redux'
-// import { setLoading, setUser } from '@/redux/authSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { setLoading, setUser } from '@/redux/authSlice'
 import { Loader2 } from 'lucide-react'
 
 const Login = () => {
-    const loading = false;
+   
     const [input, setInput] = useState({
         email: "",
         password: "",
         role: "",
     });
-    // const { loading,user } = useSelector(store => store.auth);
+    const { loading,user } = useSelector(store => store.auth);
     const navigate = useNavigate();
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -30,7 +30,7 @@ const Login = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
-            // dispatch(setLoading(true));
+            dispatch(setLoading(true));
             const res = await axios.post(`${USER_API_END_POINT}/login`, input, {
                 headers: {
                     "Content-Type": "application/json"
@@ -38,7 +38,7 @@ const Login = () => {
                 withCredentials: true,
             });
             if (res.data.success) {
-                // dispatch(setUser(res.data.user));
+                dispatch(setUser(res.data.user));
                 navigate("/");
                 toast.success(res.data.message);
             }
@@ -46,7 +46,7 @@ const Login = () => {
             console.log(error);
             toast.error(error.response.data.message);
         } finally {
-            // dispatch(setLoading(false));
+            dispatch(setLoading(false));
         }
     }
     useEffect(()=>{

@@ -2,12 +2,16 @@ import React from 'react'
 import Navbar from './shared/Navbar'
 import Footer from './shared/Footer'
 import HeroSection from './HeroSection'
+import CategoryCarousel from './CategoryCarousel'
+import LatestJobs from './LatestJobs'
 function Home() {
   return (
     <div>
       <Navbar/>
       <HeroSection/>
-      <h1>Home</h1>
+      <CategoryCarousel/>
+      <LatestJobs/>
+     
 
       <Footer/>
     </div>
